@@ -1,0 +1,24 @@
+{
+  "name": "test_mottomesh",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@nats-io/nats-core": "^3.1.0",
+    "mottomesh": "file:../pkg",
+    "solid-js": "^1.9.8",
+    "vite-plugin-top-level-await": "^1.6.0"
+  },
+  "devDependencies": {
+    "typescript": "~5.8.3",
+    "vite": "^7.1.2",
+    "vite-plugin-solid": "^2.11.8",
+    "vite-plugin-wasm": "^3.5.0"
+  },
+  "packageManager": "pnpm@10.15.0+sha512.486ebc259d3e999a4e8691ce03b5cac4a71cbeca39372a9b762cb500cfdf0873e2cb16abe3d951b1ee2cf012503f027b98b6584e4df22524e0c7450d9ec7aa7b"
+}
