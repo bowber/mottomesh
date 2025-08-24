@@ -50,4 +50,6 @@
 - [wasm-bindgen](https://github.com/wasm-bindgen/wasm-bindgen): For binding in the browser
 - [NATS.io](https://nats.io): For messaging and communication between services.
 - [flate2](https://github.com/flate2-rs/flate2-rs): For compression and decompression
+### Not implemented yet
 - [UniFFI](https://github.com/mozilla/uniffi-rs): For Android and iOS bindings (do it later for more front-end platforms)
+- [napi-rs](https://github.com/napi-rs/napi-rs): For Node.js bindings
