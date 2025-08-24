@@ -9,6 +9,13 @@
 - Browser front-end support (other front-end platforms will be considered later)
 - Rust Back-end (and binding to other languages later if needed)
 
+## Key Features
+- HTTP-like communication using `Request-Reply` mechanism of NATS
+- Realtime communication using `Pub-Sub` mechanism of NATS
+- Websocket (and NATS protocol for the server) with ease of scaling (by using NATS Cluster and Super Cluster)
+- Client-side load-balancing, Geo-Routing
+- Type-safe, compact, fast and easy Serialization/Deserialization with the combination of `bitcode-rs` and `wasm-bindgen`
+
 ## How to use
 ### Prerequisites
 - [nats-server](https://docs.nats.io/running-a-nats-service/introduction/installation) installed
@@ -38,14 +45,8 @@
 - Implement TestData struct with `#[wasm_bindgen]`
 - Write tests in `tests/web_tests.rs`
 
-### Key Features
-- HTTP-like communication using `Request-Reply` mechanism of NATS
-- Realtime communication using `Pub-Sub` mechanism of NATS
-- Websocket (and NATS protocol for the server) with ease of scaling (by using NATS Cluster and Super Cluster)
-- Client-side load-balancing, Geo-Routing
-- Type-safe, compact, fast and easy Serialization/Deserialization with the combination of `bitcode-rs` and `wasm-bindgen`
 
-### Key dependencies
+## Key dependencies
 - [bitcode-rs](https://docs.rs/bitcode/latest/bitcode/): For serialization/deserialization
 - [wasm-bindgen](https://github.com/wasm-bindgen/wasm-bindgen): For binding in the browser
 - [NATS.io](https://nats.io): For messaging and communication between services.
