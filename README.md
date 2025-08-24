@@ -1,6 +1,6 @@
 # Motto Mesh
 
-> A new way to communicate in your app (and mine).
+> A new way to communicate in my app (and yours).
 
 ### Goals
 - Use most efficient data formats.
@@ -10,6 +10,10 @@
 - Rust Back-end (and binding to other languages later if needed)
 
 ### Get Started
+- Clone this repo
+- 
+
+### Step by step
 - Add `bitcode`, `wasm-bindgen`, `async-nats` to your dependencies
 - Define for types
 - Derive traits: `bitcode::Decode`, `bitcode::Encode`

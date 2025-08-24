@@ -1,6 +1,6 @@
 [package]
 name = "mottomesh"
-version = "0.1.0"
+version = "0.3.0"
 edition = "2024"
 
 [lib]
@@ -10,11 +10,24 @@ crate-type = ["cdylib", "rlib"]
 async-nats = "0.42.0"
 tokio = { version = "1.47.1", features = ["rt-multi-thread"] }
 futures = "0.3.31"
+# Only install compress crate on native 
+# And use CompressionStream API on browser in JS (for wasm size reasons)
+flate2 = "1.1.2"
 
 [dependencies]
-bitcode = "0.6.7"
-wasm-bindgen = "0.2.100"
-zstd = "0.13.3"
+bitcode = { version = "0.6.7", default-features = false, features = ["derive"] }
+wasm-bindgen = { version = "0.2.100", default-features = false }
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.50"
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ["-Oz", "--enable-bulk-memory"]
+
+
+[profile.release]
+opt-level = "z"
+lto = true
+strip = true
+codegen-units = 1
+panic = "abort"

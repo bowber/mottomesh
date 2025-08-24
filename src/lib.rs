@@ -1,5 +1,6 @@
 use bitcode::{Decode, Encode};
 use wasm_bindgen::prelude::*;
+
 mod wasm;
 pub use wasm::errors::CustomError;
 
@@ -43,16 +44,16 @@ impl TestData {
 
     #[wasm_bindgen]
     pub fn encode(&self) -> Result<Vec<u8>, CustomError> {
-        let level = 3; // Compression level
+        // let level = 3; // Compression level
         let source: &[u8] = &bitcode::encode(self);
-        zstd::stream::encode_all(source, level).map_err(|e| e.into())
-        // Ok(source.to_vec()) // No compression for now
+        // zstd::stream::encode_all(source, level).map_err(|e| e.into())
+        Ok(source.to_vec()) // No compression for now
     }
 
     #[wasm_bindgen]
     pub fn decode(data: &[u8]) -> Result<TestData, CustomError> {
-        let decompressed = zstd::stream::decode_all(data)?;
-        // let decompressed = data.to_vec(); // No decompression for now
+        // let decompressed = zstd::stream::decode_all(data)?;
+        let decompressed = data.to_vec(); // No decompression for now
         bitcode::decode(&decompressed).map_err(|e| e.into())
     }
 }
