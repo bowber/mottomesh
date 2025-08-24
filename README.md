@@ -11,7 +11,7 @@
 
 ## Key Features
 - HTTP-like communication using `Request-Reply` mechanism of NATS
-- Realtime communication using `Pub-Sub` mechanism of NATS
+- Bi-directional communication using `Pub-Sub` mechanism of NATS
 - Websocket (and NATS protocol for the server) with ease of scaling (by using NATS Cluster and Super Cluster)
 - Client-side load-balancing, Geo-Routing
 - Type-safe, compact, fast and easy Serialization/Deserialization with the combination of `bitcode-rs` and `wasm-bindgen`
