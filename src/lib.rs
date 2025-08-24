@@ -26,7 +26,7 @@ impl TestData {
             id,
             name: name.into(),
             inner_data: InnerData {
-                id: (0..1000).map(|i| i as u32).collect(),
+                id: (0..1000).map(|_| id as u32).collect(),
                 name: (0..1000).map(|_| name.to_string()).collect(),
             },
         }
