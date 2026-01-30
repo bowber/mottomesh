@@ -1,4 +1,5 @@
 pub mod websocket;
-pub mod webtransport;
+// TODO: Re-enable after integration tests are complete
+// pub mod webtransport;
 
 mod handler;

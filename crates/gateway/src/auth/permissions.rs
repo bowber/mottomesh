@@ -11,7 +11,7 @@ pub enum Permission {
 impl Permission {
     /// Parse a permission from a string
     #[allow(dead_code)]
-    pub fn from_str(s: &str) -> Option<Self> {
+    pub fn parse(s: &str) -> Option<Self> {
         match s.to_lowercase().as_str() {
             "publish" => Some(Permission::Publish),
             "subscribe" => Some(Permission::Subscribe),

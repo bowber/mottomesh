@@ -48,3 +48,7 @@ dashmap = "6"
 [dev-dependencies]
 chrono = "0.4"
 tokio-test = "0.4"
+tokio-tungstenite = "0.26"
+testcontainers = "0.23"
+testcontainers-modules = { version = "0.11", features = ["nats"] }
+portpicker = "0.1"

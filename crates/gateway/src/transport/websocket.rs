@@ -11,12 +11,12 @@ use axum::{
     routing::get,
 };
 use futures::{SinkExt, StreamExt};
+use tokio::task::JoinHandle;
 use tower_http::cors::{Any, CorsLayer};
 use tracing::{debug, info, warn};
 
 use crate::auth::JwtValidator;
 use crate::bridge::NatsBridge;
-use crate::config::GatewayConfig;
 use crate::protocol::MessageCodec;
 
 use super::handler::ConnectionHandler;
@@ -29,11 +29,14 @@ struct AppState {
 }
 
 /// Run the WebSocket server
+/// Returns the actual bound port and a handle to the server task
 pub async fn run_server(
-    config: GatewayConfig,
+    host: String,
+    port: u16,
     jwt_validator: Arc<JwtValidator>,
     nats_bridge: Arc<NatsBridge>,
-) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+) -> Result<(u16, JoinHandle<Result<(), std::io::Error>>), Box<dyn std::error::Error + Send + Sync>>
+{
     let state = AppState {
         jwt_validator,
         nats_bridge,
@@ -50,19 +53,22 @@ pub async fn run_server(
         .with_state(state)
         .layer(cors);
 
-    // For now, run without TLS on a separate port for WebSocket
-    // WebTransport will handle the TLS/QUIC connections
-    let ws_addr = format!("{}:{}", config.host, config.https_port + 1);
-    let listener = tokio::net::TcpListener::bind(&ws_addr).await?;
-    info!("WebSocket server (no TLS) listening on {}", ws_addr);
+    let addr = format!("{}:{}", host, port);
+    let listener = tokio::net::TcpListener::bind(&addr).await?;
+    let actual_addr = listener.local_addr()?;
+    let actual_port = actual_addr.port();
 
-    axum::serve(
-        listener,
-        app.into_make_service_with_connect_info::<SocketAddr>(),
-    )
-    .await?;
+    info!("WebSocket server listening on {}", actual_addr);
 
-    Ok(())
+    let handle = tokio::spawn(async move {
+        axum::serve(
+            listener,
+            app.into_make_service_with_connect_info::<SocketAddr>(),
+        )
+        .await
+    });
+
+    Ok((actual_port, handle))
 }
 
 async fn health_handler() -> &'static str {
