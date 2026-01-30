@@ -80,7 +80,7 @@ async fn ws_handler(
 
 async fn handle_socket(socket: WebSocket, state: AppState, addr: SocketAddr) {
     let mut handler = ConnectionHandler::new(state.jwt_validator, state.nats_bridge);
-    
+
     let (mut sender, mut receiver) = socket.split();
 
     loop {
@@ -118,7 +118,7 @@ async fn handle_socket(socket: WebSocket, state: AppState, addr: SocketAddr) {
                     }
                 }
             }
-            
+
             // Handle NATS messages to forward to client
             nats_msg = handler.nats_receiver().recv() => {
                 if let Some(nats_msg) = nats_msg

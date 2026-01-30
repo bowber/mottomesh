@@ -34,8 +34,14 @@ impl Gateway {
 
     pub async fn run(self) -> Result<(), Box<dyn std::error::Error>> {
         info!("Starting gateway...");
-        info!("WebSocket endpoint: wss://{}:{}/ws", self.config.host, self.config.https_port);
-        info!("WebTransport endpoint: https://{}:{}/wt", self.config.host, self.config.https_port);
+        info!(
+            "WebSocket endpoint: wss://{}:{}/ws",
+            self.config.host, self.config.https_port
+        );
+        info!(
+            "WebTransport endpoint: https://{}:{}/wt",
+            self.config.host, self.config.https_port
+        );
 
         let ws_config = self.config.clone();
         let ws_jwt = self.jwt_validator.clone();
@@ -70,7 +76,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .with_env_filter(
             tracing_subscriber::EnvFilter::from_default_env()
                 .add_directive("mottomesh_gateway=info".parse()?)
-                .add_directive("wtransport=info".parse()?)
+                .add_directive("wtransport=info".parse()?),
         )
         .init();
 

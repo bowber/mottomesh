@@ -2,10 +2,7 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use tracing::{debug, error, info, warn};
-use wtransport::{
-    Endpoint, Identity, ServerConfig,
-    endpoint::IncomingSession,
-};
+use wtransport::{Endpoint, Identity, ServerConfig, endpoint::IncomingSession};
 
 use crate::auth::JwtValidator;
 use crate::bridge::NatsBridge;
@@ -23,7 +20,10 @@ pub async fn run_server(
     // Generate or load TLS certificate
     let identity = match (&config.tls_cert_path, &config.tls_key_path) {
         (Some(cert_path), Some(key_path)) => {
-            info!("Loading TLS certificate from {} and {}", cert_path, key_path);
+            info!(
+                "Loading TLS certificate from {} and {}",
+                cert_path, key_path
+            );
             Identity::load_pemfiles(cert_path, key_path).await?
         }
         _ => {
@@ -39,15 +39,18 @@ pub async fn run_server(
         .build();
 
     let server = Endpoint::server(server_config)?;
-    
-    info!("WebTransport server listening on port {}", config.https_port);
+
+    info!(
+        "WebTransport server listening on port {}",
+        config.https_port
+    );
 
     loop {
         let incoming = server.accept().await;
-        
+
         let jwt = jwt_validator.clone();
         let nats = nats_bridge.clone();
-        
+
         tokio::spawn(async move {
             if let Err(e) = handle_incoming(incoming, jwt, nats).await {
                 error!("WebTransport connection error: {}", e);
@@ -62,7 +65,7 @@ async fn handle_incoming(
     nats_bridge: Arc<NatsBridge>,
 ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
     let session_request = incoming.await?;
-    
+
     info!(
         "WebTransport connection from {} to {}",
         session_request.authority(),
@@ -71,7 +74,7 @@ async fn handle_incoming(
 
     let connection = session_request.accept().await?;
     let stable_id = connection.stable_id();
-    
+
     info!("WebTransport session established: {}", stable_id);
 
     let mut handler = ConnectionHandler::new(jwt_validator, nats_bridge);
@@ -107,7 +110,7 @@ async fn handle_incoming(
                     }
                 }
             }
-            
+
             // Handle datagrams (unreliable, low-latency messages)
             datagram = connection.receive_datagram() => {
                 match datagram {
@@ -126,7 +129,7 @@ async fn handle_incoming(
                     }
                 }
             }
-            
+
             // Handle NATS messages to forward to client
             nats_msg = handler.nats_receiver().recv() => {
                 if let Some(nats_msg) = nats_msg
@@ -151,7 +154,7 @@ async fn handle_incoming(
                     }
                 }
             }
-            
+
             // Check if connection is closed
             _ = connection.closed() => {
                 info!("WebTransport connection closed: {}", stable_id);

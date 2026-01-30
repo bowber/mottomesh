@@ -18,7 +18,7 @@ impl NatsBridge {
         let client = async_nats::connect(url)
             .await
             .map_err(|e| BridgeError::ConnectionFailed(e.to_string()))?;
-        
+
         info!("Connected to NATS");
         Ok(Self { client })
     }
@@ -29,7 +29,8 @@ impl NatsBridge {
         subject: String,
         sender: mpsc::Sender<NatsMessage>,
     ) -> Result<SubscriptionHandle, BridgeError> {
-        let subscriber = self.client
+        let subscriber = self
+            .client
             .subscribe(subject.clone())
             .await
             .map_err(|e| BridgeError::SubscribeFailed(e.to_string()))?;
@@ -88,7 +89,8 @@ impl NatsBridge {
     ) -> Result<Vec<u8>, BridgeError> {
         let response = tokio::time::timeout(
             timeout,
-            self.client.request(subject.to_string(), Bytes::from(payload)),
+            self.client
+                .request(subject.to_string(), Bytes::from(payload)),
         )
         .await
         .map_err(|_| BridgeError::RequestTimeout)?

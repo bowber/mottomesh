@@ -25,7 +25,7 @@ pub struct ConnectionHandler {
 impl ConnectionHandler {
     pub fn new(jwt_validator: Arc<JwtValidator>, nats_bridge: Arc<NatsBridge>) -> Self {
         let (nats_tx, nats_rx) = mpsc::channel(256);
-        
+
         Self {
             jwt_validator,
             nats_bridge,
@@ -102,7 +102,7 @@ impl ConnectionHandler {
     /// Convert a NATS message to a ServerMessage
     pub fn nats_to_server_message(&self, nats_msg: NatsMessage) -> Option<ServerMessage> {
         let session = self.session.as_ref()?;
-        
+
         // Find the subscription ID for this subject
         for (sub_id, subject) in &session.subscriptions {
             if *subject == nats_msg.subject {
@@ -133,7 +133,10 @@ impl ConnectionHandler {
             Ok(claims) => {
                 let session = Session::new(claims);
                 let session_id = session.id.clone();
-                info!("User {} authenticated, session {}", session.user_id, session_id);
+                info!(
+                    "User {} authenticated, session {}",
+                    session.user_id, session_id
+                );
                 self.session = Some(session);
                 Some(ServerMessage::AuthOk { session_id })
             }
@@ -158,11 +161,18 @@ impl ConnectionHandler {
         }
 
         // Create NATS subscription
-        match self.nats_bridge.subscribe(subject.clone(), self.nats_tx.clone()).await {
+        match self
+            .nats_bridge
+            .subscribe(subject.clone(), self.nats_tx.clone())
+            .await
+        {
             Ok(handle) => {
                 session.add_subscription(id, subject.clone());
                 self.subscriptions.insert(id, handle);
-                debug!("User {} subscribed to {} (id={})", session.user_id, subject, id);
+                debug!(
+                    "User {} subscribed to {} (id={})",
+                    session.user_id, subject, id
+                );
                 Some(ServerMessage::SubscribeOk { id })
             }
             Err(e) => {
