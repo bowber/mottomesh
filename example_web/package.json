@@ -1,5 +1,5 @@
 {
-  "name": "test_mottomesh",
+  "name": "example_mottomesh",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@nats-io/nats-core": "^3.1.0",
+    "@mottomesh/client": "file:../client-ts",
     "mottomesh": "file:../pkg",
     "solid-js": "^1.9.8",
     "vite-plugin-top-level-await": "^1.6.0"

@@ -1,0 +1,17 @@
+[package]
+name = "mottomesh-server"
+version = "0.1.0"
+edition = "2024"
+
+[[bin]]
+name = "mottomesh-server"
+path = "src/main.rs"
+
+[dependencies]
+mottomesh = { path = "../mottomesh" }
+async-nats = "0.42.0"
+tokio = { version = "1.47.1", features = ["rt-multi-thread"] }
+futures = "0.3.31"
+flate2 = "1.1.2"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }

@@ -1,0 +1,17 @@
+[package]
+name = "mottomesh"
+version = "0.4.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+bitcode = { version = "0.6.7", default-features = false, features = ["derive"] }
+wasm-bindgen = { version = "0.2.100", default-features = false }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3.50"
+
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = ["-Oz", "--enable-bulk-memory"]

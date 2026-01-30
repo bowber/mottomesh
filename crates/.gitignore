@@ -1,0 +1,8 @@
+# Crate-level target directories (if using cargo build in subdirs)
+target/
+
+# Test artifacts
+*.profraw
+
+# Generated files
+*.generated.*

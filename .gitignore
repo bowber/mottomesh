@@ -1,1 +1,31 @@
-/target
+# Rust
+/target/
+Cargo.lock
+
+# WASM build output
+/pkg/
+
+# Node.js (for any JS tooling at root)
+node_modules/
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+
+# Test artifacts
+*.profraw
