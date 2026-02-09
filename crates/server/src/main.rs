@@ -62,8 +62,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             Err(e) => {
                 error!(
                     "Rx Failed to decompress {:?} bytes message: {:#?}",
-                    message.length,
-                    e
+                    message.length, e
                 );
                 continue;
             }
@@ -71,14 +70,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         match TestData::from_bytes(&decompressed) {
             Ok(data) => info!(
                 "Rx: Received {:?} bytes message: id={} name={}",
-                message.length,
-                data.id,
-                data.name
+                message.length, data.id, data.name
             ),
             Err(e) => error!(
                 "Rx Failed to decode {:?} bytes message: {:#?}",
-                message.length,
-                e
+                message.length, e
             ),
         }
     }
