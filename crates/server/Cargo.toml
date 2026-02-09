@@ -8,7 +8,7 @@ name = "mottomesh-server"
 path = "src/main.rs"
 
 [dependencies]
-mottomesh = { path = "../mottomesh" }
+schema_sdk = { path = "../../schema/generated/rust", default-features = false, features = ["core"] }
 async-nats = "0.42.0"
 tokio = { version = "1.47.1", features = ["rt-multi-thread"] }
 futures = "0.3.31"

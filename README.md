@@ -25,20 +25,21 @@
 - **NATS-style subject patterns** with wildcard support (`*` and `>`)
 - **Bi-directional real-time communication** via pub/sub
 - **Request-reply pattern** support
-- **Type-safe serialization** with bitcode + WASM bindings
+- **Motto-generated protocol + payload SDKs** from a single Rust schema
 - **Automatic reconnection** with subscription restoration
 
 ## Project Structure
 
 ```
 mottomesh/
+├── schema/                 # Motto source schema + generated SDKs
+│   ├── src/schema.rs       # Single source of truth for protocol + payload types
+│   └── generated/          # Generated Rust + TypeScript SDKs
 ├── crates/
-│   ├── mottomesh/          # Shared library (data types, WASM bindings)
 │   ├── gateway/            # Gateway server (WebTransport + WebSocket)
 │   └── server/             # Backend service example
 ├── client-ts/              # TypeScript client library
 ├── example_web/            # Example SolidJS web app
-├── pkg/                    # Generated WASM package
 └── nats.conf               # NATS server configuration
 ```
 
@@ -48,7 +49,7 @@ mottomesh/
 
 - [Rust](https://rustup.rs/) (edition 2024)
 - [nats-server](https://docs.nats.io/running-a-nats-service/introduction/installation)
-- [wasm-pack](https://rustwasm.github.io/wasm-pack/)
+- [motto](https://crates.io/crates/motto) CLI (`cargo install motto --version 0.3.2`)
 - Node.js 18+
 
 ### 1. Start NATS Server
@@ -57,11 +58,14 @@ mottomesh/
 nats-server -c nats.conf
 ```
 
-### 2. Build WASM Package
+### 2. Generate SDKs from Motto Schema
 
 ```bash
-cd crates/mottomesh
-wasm-pack build --target web
+# one-command helper (defaults to patch bump)
+./scripts/regen-sdk.sh
+
+# optional: choose bump level
+./scripts/regen-sdk.sh minor
 ```
 
 ### 3. Start the Gateway
@@ -96,7 +100,7 @@ pnpm dev
 
 ```typescript
 import { MottomeshClient } from '@mottomesh/client';
-import { TestData } from 'mottomesh';
+import { encodeTestData, decodeTestData } from '@motto/schema';
 
 // Create client
 const client = new MottomeshClient({
@@ -110,13 +114,20 @@ await client.connect();
 
 // Subscribe to messages
 const sub = client.subscribe('messages', (msg) => {
-  const data = TestData.decode(msg.payload);
-  console.log('Received:', data.name());
+  const data = decodeTestData(msg.payload);
+  console.log('Received:', data.name);
 });
 
 // Publish a message
-const data = new TestData(1, 'hello');
-await client.publish('messages', data.encode());
+const data = {
+  id: 1,
+  name: 'hello',
+  inner_data: {
+    id: [1, 1, 1],
+    name: ['hello', 'hello', 'hello'],
+  },
+};
+await client.publish('messages', encodeTestData(data));
 
 // Clean up
 await sub.unsubscribe();
@@ -156,7 +167,7 @@ The gateway expects JWT tokens with these claims:
 
 ## Development
 
-### Build All Crates
+### Build Rust Workspace
 
 ```bash
 cargo build
@@ -165,32 +176,19 @@ cargo build
 ### Run Tests
 
 ```bash
-# Run all Rust tests (71 tests)
+# Run all Rust tests
 cargo test
 
-# Run TypeScript client tests (53 tests)
+# Run TypeScript client tests
 cd client-ts
-npm test
-
-# WASM tests (requires Chrome)
-cd crates/mottomesh
-wasm-pack test --chrome
+pnpm exec vitest run
 ```
-
-#### Test Coverage
-
-| Component | Tests | Coverage |
-|-----------|-------|----------|
-| `crates/mottomesh` | 13 | TestData encoding/decoding, edge cases |
-| `crates/gateway` | 58 | JWT, permissions, sessions, codec, handler |
-| `client-ts` | 53 | Codec, messages, client API |
-| **Total** | **124** | |
 
 ### Build TypeScript Client
 
 ```bash
 cd client-ts
-npm run build
+pnpm build
 ```
 
 ### Type Checking
@@ -198,7 +196,7 @@ npm run build
 ```bash
 # TypeScript type checking
 cd client-ts
-npm run lint
+pnpm lint
 ```
 
 ## Key Dependencies
@@ -206,8 +204,7 @@ npm run lint
 - **[wtransport](https://github.com/BiagioFesta/wtransport)**: WebTransport implementation
 - **[axum](https://github.com/tokio-rs/axum)**: WebSocket server framework
 - **[async-nats](https://github.com/nats-io/nats.rs)**: NATS client
-- **[bitcode](https://docs.rs/bitcode)**: Efficient binary serialization
-- **[wasm-bindgen](https://github.com/rustwasm/wasm-bindgen)**: WASM bindings
+- **[motto](https://crates.io/crates/motto)**: Schema-first multi-platform SDK generation
 
 ## Future Enhancements
 

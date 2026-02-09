@@ -1,6 +1,3 @@
-// Suppress false positive warnings from bitcode derive macros
-#![allow(unused_assignments)]
-
 pub mod auth;
 pub mod bridge;
 pub mod config;

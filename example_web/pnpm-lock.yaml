@@ -8,12 +8,12 @@ importers:
 
   .:
     dependencies:
-      '@nats-io/nats-core':
-        specifier: ^3.1.0
-        version: 3.1.0
-      mottomesh:
-        specifier: file:../pkg
-        version: file:../pkg
+      '@motto/schema':
+        specifier: file:../schema/generated/typescript
+        version: file:../schema/generated/typescript
+      '@mottomesh/client':
+        specifier: file:../client-ts
+        version: file:../client-ts
       solid-js:
         specifier: ^1.9.8
         version: 1.9.9
@@ -290,16 +290,11 @@ packages:
   '@jridgewell/trace-mapping@0.3.30':
     resolution: {integrity: sha512-GQ7Nw5G2lTu/BtHTKfXhKHok2WGetd4XYcVKGx00SjAk8GMwgJM3zr6zORiPGuOE+/vkc90KtTosSSvaCjKb2Q==}
 
-  '@nats-io/nats-core@3.1.0':
-    resolution: {integrity: sha512-xsSkLEGGcqNF+Ru8dMjPmKtfbBeq/U4meuJJX4Zi+5TBHpjpjNjs4YkCBC/pGYWnEum1/vdNPizjE1RdNHCyBg==}
+  '@motto/schema@file:../schema/generated/typescript':
+    resolution: {directory: ../schema/generated/typescript, type: directory}
 
-  '@nats-io/nkeys@2.0.3':
-    resolution: {integrity: sha512-JVt56GuE6Z89KUkI4TXUbSI9fmIfAmk6PMPknijmuL72GcD+UgIomTcRWiNvvJKxA01sBbmIPStqJs5cMRBC3A==}
-    engines: {node: '>=18.0.0'}
-
-  '@nats-io/nuid@2.0.3':
-    resolution: {integrity: sha512-TpA3HEBna/qMVudy+3HZr5M3mo/L1JPofpVT4t0HkFGkz2Cn9wrlrQC8tvR8Md5Oa9//GtGG26eN0qEWF5Vqew==}
-    engines: {node: '>= 18.x'}
+  '@mottomesh/client@file:../client-ts':
+    resolution: {directory: ../client-ts, type: directory}
 
   '@rollup/plugin-virtual@3.0.2':
     resolution: {integrity: sha512-10monEYsBp3scM4/ND4LNH5Rxvh3e/cVeL3jWTgZ2SrQ+BmUoQcopVQvnaMcOnykb1VkxUFuDAN+0FnpTFRy2A==}
@@ -601,9 +596,6 @@ packages:
     resolution: {integrity: sha512-eRtbOb1N5iyH0tkQDAoQ4Ipsp/5qSR79Dzrz8hEPxRX10RWWR/iQXdoKmBSRCThY1Fh5EhISDtpSc93fpxUniQ==}
     engines: {node: '>=12.13'}
 
-  mottomesh@file:../pkg:
-    resolution: {directory: ../pkg, type: directory}
-
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
@@ -663,9 +655,6 @@ packages:
   tinyglobby@0.2.14:
     resolution: {integrity: sha512-tX5e7OM1HnYr2+a2C/4V0htOcSQcoSTH9KgJnVvNm5zm/cyEWKJ7j7YutsH9CxMdtOkkLFy2AHrMci9IM8IPZQ==}
     engines: {node: '>=12.0.0'}
-
-  tweetnacl@1.0.3:
-    resolution: {integrity: sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==}
 
   typescript@5.8.3:
     resolution: {integrity: sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==}
@@ -966,16 +955,11 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@nats-io/nats-core@3.1.0':
-    dependencies:
-      '@nats-io/nkeys': 2.0.3
-      '@nats-io/nuid': 2.0.3
+  '@motto/schema@file:../schema/generated/typescript': {}
 
-  '@nats-io/nkeys@2.0.3':
+  '@mottomesh/client@file:../client-ts':
     dependencies:
-      tweetnacl: 1.0.3
-
-  '@nats-io/nuid@2.0.3': {}
+      '@motto/schema': file:../schema/generated/typescript
 
   '@rollup/plugin-virtual@3.0.2(rollup@4.48.0)':
     optionalDependencies:
@@ -1214,8 +1198,6 @@ snapshots:
     dependencies:
       is-what: 4.1.16
 
-  mottomesh@file:../pkg: {}
-
   ms@2.1.3: {}
 
   nanoid@3.3.11: {}
@@ -1291,8 +1273,6 @@ snapshots:
     dependencies:
       fdir: 6.5.0(picomatch@4.0.3)
       picomatch: 4.0.3
-
-  tweetnacl@1.0.3: {}
 
   typescript@5.8.3: {}
 

@@ -1,0 +1,58 @@
+[package]
+name = "schema_sdk"
+version = "0.1.0"
+edition = "2021"
+description = "Generated Motto SDK for schema"
+license = "MIT OR Apache-2.0"
+
+# Motto schema metadata
+[package.metadata.motto]
+fingerprint = "6dd935d3b48ac8c1"
+protocol_version = 109
+
+[features]
+default = ["core", "webtransport", "websocket"]
+core = []
+webtransport = ["core", "dep:tokio", "dep:wtransport"]
+websocket = ["core", "dep:tokio", "dep:tokio-tungstenite"]
+
+# WASM features (automatically enabled by target)
+wasm = ["dep:wasm-bindgen", "dep:wasm-bindgen-futures", "dep:js-sys", "dep:web-sys"]
+
+[dependencies]
+# Core has no dependencies - pure Rust types + codec
+
+# Native async runtime (for transport features)
+tokio = { version = "1", features = ["rt", "sync", "time"], optional = true }
+
+# Native WebTransport
+wtransport = { version = "0.6", optional = true }
+
+# Native WebSocket
+tokio-tungstenite = { version = "0.24", optional = true }
+
+# WASM bindings (auto-enabled on wasm32 target)
+wasm-bindgen = { version = "0.2", optional = true }
+wasm-bindgen-futures = { version = "0.4", optional = true }
+js-sys = { version = "0.3", optional = true }
+web-sys = { version = "0.3", optional = true, features = [
+    "WebTransport", "WebTransportDatagramDuplexStream",
+    "ReadableStream", "WritableStream", "ReadableStreamDefaultReader",
+    "WritableStreamDefaultWriter", "WebSocket", "MessageEvent", "BinaryType",
+    "CloseEvent", "ErrorEvent", "Window"
+] }
+
+[dev-dependencies]
+# For testing
+
+# Auto-enable wasm feature on wasm32 target
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen = { version = "0.2" }
+wasm-bindgen-futures = { version = "0.4" }
+js-sys = { version = "0.3" }
+web-sys = { version = "0.3", features = [
+    "WebTransport", "WebTransportDatagramDuplexStream",
+    "ReadableStream", "WritableStream", "ReadableStreamDefaultReader",
+    "WritableStreamDefaultWriter", "WebSocket", "MessageEvent", "BinaryType",
+    "CloseEvent", "ErrorEvent", "Window"
+] }

@@ -1,6 +1,6 @@
 /**
  * Protocol message types for Mottomesh gateway communication
- * These mirror the Rust protocol definitions in crates/gateway/src/protocol/messages.rs
+ * These map to the shared Motto schema contract.
  */
 
 // Client -> Server messages

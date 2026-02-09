@@ -89,11 +89,11 @@ async fn handle_incoming(
                         let mut buf = vec![0u8; 65536];
                         match recv.read(&mut buf).await {
                             Ok(Some(n)) => {
-                                if let Some(response) = handler.handle_message(&buf[..n]).await {
-                                    let encoded = MessageCodec::encode_server(&response);
-                                    if let Err(e) = send.write_all(&encoded).await {
-                                        warn!("Failed to send response: {}", e);
-                                    }
+                        if let Some(response) = handler.handle_message(&buf[..n]).await {
+                            let encoded = MessageCodec::encode_server(&response);
+                            if let Err(e) = send.write_all(&encoded).await {
+                                warn!("Failed to send response: {}", e);
+                            }
                                 }
                             }
                             Ok(None) => {
@@ -117,7 +117,7 @@ async fn handle_incoming(
                     Ok(data) => {
                         if let Some(response) = handler.handle_message(&data).await {
                             let encoded = MessageCodec::encode_server(&response);
-                            if let Err(e) = connection.send_datagram(encoded) {
+                            if let Err(e) = connection.send_datagram(encoded.into()) {
                                 warn!("Failed to send datagram response: {}", e);
                             }
                         }
@@ -137,7 +137,7 @@ async fn handle_incoming(
                 {
                     let encoded = MessageCodec::encode_server(&server_msg);
                     // Use datagram for subscription messages (faster, no head-of-line blocking)
-                    if connection.send_datagram(encoded.clone()).is_err() {
+                    if connection.send_datagram(encoded.clone().into()).is_err() {
                         // Fall back to reliable stream if datagram fails
                         match connection.open_uni().await {
                             Ok(opening) => {

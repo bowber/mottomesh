@@ -8,7 +8,7 @@ name = "mottomesh-gateway"
 path = "src/main.rs"
 
 [dependencies]
-mottomesh = { path = "../mottomesh" }
+schema_sdk = { path = "../../schema/generated/rust", default-features = false, features = ["core"] }
 
 # WebTransport
 wtransport = { version = "0.6", features = ["self-signed"] }
@@ -26,9 +26,6 @@ serde_json = "1"
 
 # NATS bridge
 async-nats = "0.42"
-
-# Encoding
-bitcode = { version = "0.6.7", features = ["derive"] }
 
 # TLS
 rcgen = "0.13"

@@ -1,6 +1,6 @@
 import { createSignal, onCleanup, onMount } from 'solid-js'
 import './App.css'
-import { TestData } from 'mottomesh'
+import { decodeTestData, encodeTestData, type TestData } from '@motto/schema'
 import { MottomeshClient } from '@mottomesh/client'
 
 // Helper function to generate a demo JWT token
@@ -29,7 +29,14 @@ function App() {
   const [client, setClient] = createSignal<MottomeshClient | null>(null)
   const [transportType, setTransportType] = createSignal<string>("")
 
-  const data = () => new TestData(count(), 't' + count())
+  const data = (): TestData => ({
+    id: count(),
+    name: `t${count()}`,
+    inner_data: {
+      id: Array.from({ length: 1000 }, () => count()),
+      name: Array.from({ length: 1000 }, () => `t${count()}`),
+    },
+  })
 
   const createConnection = async () => {
     console.log("Creating connection...");
@@ -73,8 +80,8 @@ function App() {
       const sub = clientInstance.subscribe('messages', async (msg) => {
         const start = performance.now();
         const decompressedData = await decompressData(msg.payload);
-        const d = TestData.decode(new Uint8Array(decompressedData));
-        const logMsg = `Rx: id:${d.id()} name: ${d.name()} compressed:${msg.payload.byteLength} bytes, decompressed:${decompressedData.byteLength} bytes, took:${(performance.now() - start).toFixed(2)} ms`;
+        const d = decodeTestData(new Uint8Array(decompressedData));
+        const logMsg = `Rx: id:${d.id} name: ${d.name} compressed:${msg.payload.byteLength} bytes, decompressed:${decompressedData.byteLength} bytes, took:${(performance.now() - start).toFixed(2)} ms`;
         console.log(logMsg);
         setRxLogs((prev) => prev + `\n${logMsg}`);
       });
@@ -100,10 +107,10 @@ function App() {
     if (!clientInstance || !clientInstance.isConnected()) return;
     
     const d = data()
-    const encodedData = d.encode();
+    const encodedData = encodeTestData(d);
     const compressedData = await compressData(encodedData);
     await clientInstance.publish("messages", new Uint8Array(compressedData));
-    console.log(`Tx: id:${d.id()} name:${d.name()} compressed:${compressedData.byteLength} bytes, original:${encodedData.length} bytes`);
+    console.log(`Tx: id:${d.id} name:${d.name} compressed:${compressedData.byteLength} bytes, original:${encodedData.length} bytes`);
   }
 
   return (

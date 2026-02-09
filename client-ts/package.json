@@ -2,8 +2,8 @@
   "name": "@mottomesh/client",
   "version": "0.1.0",
   "description": "TypeScript client for Mottomesh gateway with WebTransport and WebSocket support",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
@@ -18,9 +18,9 @@
   ],
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
   "keywords": [
@@ -31,6 +31,9 @@
     "client"
   ],
   "license": "MIT",
+  "dependencies": {
+    "@motto/schema": "file:../schema/generated/typescript"
+  },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
@@ -40,8 +43,5 @@
     "typescript": "^5.0.0",
     "typescript-eslint": "^8.54.0",
     "vitest": "^2.0.0"
-  },
-  "peerDependencies": {
-    "mottomesh": "^0.4.0"
   }
 }

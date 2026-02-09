@@ -2,17 +2,18 @@ use std::io::Read;
 
 use flate2::{Compression, bufread::GzDecoder, read::GzEncoder};
 use futures::StreamExt;
-use mottomesh::{CustomError, TestData};
+use schema_sdk::codec::{Decode, Encode};
+use schema_sdk::{InnerData, TestData};
 use tracing::{error, info};
 
-fn compress(data: &[u8]) -> Result<Vec<u8>, CustomError> {
+fn compress(data: &[u8]) -> Result<Vec<u8>, std::io::Error> {
     let mut ret_vec = Vec::new();
     let mut gz = GzEncoder::new(data, Compression::fast());
     gz.read_to_end(&mut ret_vec)?;
     Ok(ret_vec)
 }
 
-fn decompress(bytes: &[u8]) -> Result<Vec<u8>, CustomError> {
+fn decompress(bytes: &[u8]) -> Result<Vec<u8>, std::io::Error> {
     let mut gz = GzDecoder::new(bytes);
     let mut b = Vec::new();
     gz.read_to_end(&mut b)?;
@@ -41,8 +42,15 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Publish messages to the "messages" subject
     for i in 0..3 {
         let name = format!("Test {}", i);
-        let data = TestData::new(i, name.as_str());
-        let compressed = compress(&data.encode()?)?;
+        let data = TestData {
+            id: i,
+            name: name.clone(),
+            inner_data: InnerData {
+                id: (0..1000).map(|_| i).collect(),
+                name: (0..1000).map(|_| name.clone()).collect(),
+            },
+        };
+        let compressed = compress(&data.to_bytes())?;
         client.publish("messages", compressed.into()).await?;
         info!("Tx: Published message {}", name);
     }
@@ -55,21 +63,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 error!(
                     "Rx Failed to decompress {:?} bytes message: {:#?}",
                     message.length,
-                    e.message()
+                    e
                 );
                 continue;
             }
         };
-        match TestData::decode(&decompressed) {
+        match TestData::from_bytes(&decompressed) {
             Ok(data) => info!(
-                "Rx: Received {:?} bytes message: {:?}",
+                "Rx: Received {:?} bytes message: id={} name={}",
                 message.length,
-                data.name()
+                data.id,
+                data.name
             ),
             Err(e) => error!(
                 "Rx Failed to decode {:?} bytes message: {:#?}",
                 message.length,
-                e.message()
+                e
             ),
         }
     }

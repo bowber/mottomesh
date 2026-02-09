@@ -1,0 +1,19 @@
+format_version = 1
+fingerprint = "6dd935d3b48ac8c177ad5995ff3060d02268379a59ca971c171bd881acb2f35a"
+protocol_byte = 3
+updated_at = "2026-02-09T12:20:20.531051393+00:00"
+
+[version]
+major = 0
+minor = 3
+patch = 1
+
+[[history]]
+version = "0.2.0"
+fingerprint = "e9a19f2b0e3864ce9797e6f6ad801be7c3d6af857ec664a00861bf0295719e41"
+timestamp = "2026-02-08T08:40:04.225251887+00:00"
+
+[[history]]
+version = "0.3.0"
+fingerprint = "d7cd7c6a7f5281d091e59f10008951da179d83f4e671e92b98b09638eca857f9"
+timestamp = "2026-02-08T08:50:08.990177472+00:00"

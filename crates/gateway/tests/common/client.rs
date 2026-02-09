@@ -25,7 +25,7 @@ impl TestClient {
     pub async fn send(&mut self, msg: ClientMessage) {
         let encoded = MessageCodec::encode_client(&msg);
         self.ws
-            .send(Message::Binary(encoded))
+            .send(Message::Binary(encoded.into()))
             .await
             .expect("Failed to send message");
     }

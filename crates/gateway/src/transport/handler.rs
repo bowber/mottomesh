@@ -7,7 +7,11 @@ use tracing::{debug, error, info, warn};
 
 use crate::auth::{JwtValidator, Permission, PermissionChecker, Session};
 use crate::bridge::{NatsBridge, NatsMessage, SubscriptionHandle};
-use crate::protocol::{ClientMessage, MessageCodec, ServerMessage, messages::error_codes};
+use crate::protocol::{ClientMessage, MessageCodec, ServerMessage, error_codes};
+
+fn client_message_requires_auth(msg: &ClientMessage) -> bool {
+    !matches!(msg, ClientMessage::Auth { .. } | ClientMessage::Ping)
+}
 
 /// Handles the logic for a single client connection
 /// This is transport-agnostic - works for both WebSocket and WebTransport
@@ -61,7 +65,7 @@ impl ConnectionHandler {
         };
 
         // Check authentication for messages that require it
-        if msg.requires_auth() && !self.is_authenticated() {
+        if client_message_requires_auth(&msg) && !self.is_authenticated() {
             return Some(ServerMessage::Error {
                 code: error_codes::UNAUTHORIZED,
                 message: "Not authenticated".to_string(),
@@ -355,13 +359,13 @@ mod tests {
         let msg = ClientMessage::Auth {
             token: "test".to_string(),
         };
-        assert!(!msg.requires_auth());
+        assert!(!client_message_requires_auth(&msg));
     }
 
     #[test]
     fn test_requires_auth_ping() {
         let msg = ClientMessage::Ping;
-        assert!(!msg.requires_auth());
+        assert!(!client_message_requires_auth(&msg));
     }
 
     #[test]
@@ -370,7 +374,7 @@ mod tests {
             subject: "test".to_string(),
             id: 1,
         };
-        assert!(msg.requires_auth());
+        assert!(client_message_requires_auth(&msg));
     }
 
     #[test]
@@ -379,7 +383,7 @@ mod tests {
             subject: "test".to_string(),
             payload: vec![],
         };
-        assert!(msg.requires_auth());
+        assert!(client_message_requires_auth(&msg));
     }
 
     #[test]
@@ -390,12 +394,12 @@ mod tests {
             timeout_ms: 1000,
             request_id: 1,
         };
-        assert!(msg.requires_auth());
+        assert!(client_message_requires_auth(&msg));
     }
 
     #[test]
     fn test_requires_auth_unsubscribe() {
         let msg = ClientMessage::Unsubscribe { id: 1 };
-        assert!(msg.requires_auth());
+        assert!(client_message_requires_auth(&msg));
     }
 }

@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@mottomesh/client": "file:../client-ts",
-    "mottomesh": "file:../pkg",
+    "@motto/schema": "file:../schema/generated/typescript",
     "solid-js": "^1.9.8",
     "vite-plugin-top-level-await": "^1.6.0"
   },

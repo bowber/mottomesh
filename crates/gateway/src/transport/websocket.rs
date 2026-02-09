@@ -97,7 +97,7 @@ async fn handle_socket(socket: WebSocket, state: AppState, addr: SocketAddr) {
                     Some(Ok(Message::Binary(data))) => {
                         if let Some(response) = handler.handle_message(&data).await {
                             let encoded = MessageCodec::encode_server(&response);
-                            if sender.send(Message::Binary(encoded)).await.is_err() {
+                            if sender.send(Message::Binary(encoded.into())).await.is_err() {
                                 break;
                             }
                         }
@@ -131,7 +131,7 @@ async fn handle_socket(socket: WebSocket, state: AppState, addr: SocketAddr) {
                     && let Some(server_msg) = handler.nats_to_server_message(nats_msg)
                 {
                     let encoded = MessageCodec::encode_server(&server_msg);
-                    if sender.send(Message::Binary(encoded)).await.is_err() {
+                    if sender.send(Message::Binary(encoded.into())).await.is_err() {
                         break;
                     }
                 }
